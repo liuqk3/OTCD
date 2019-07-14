@@ -1,0 +1,6 @@
+detect_results
+track_results
+.idea
+__pycache__
+data/pretrained_model
+save
