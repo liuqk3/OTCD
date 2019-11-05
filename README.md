@@ -17,7 +17,9 @@ git clone https://github.com/liuqk3/OTCD.git
 cd OTCD
 ```
 2) download the pretrained model from [BaiduYunPan](https://pan.baidu.com/s/1faVx3KvolH_uXgvwSXYhxg), the extraction code
- is ```e0kq```. Then put all models to ```./save```
+ is ```e0kq```. Then put all models to ```./save```.
+
+ If you have any problems with the download process, please email me.
 
 3) run the tracker
 
