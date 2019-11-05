@@ -4,3 +4,4 @@ track_results
 __pycache__
 data/pretrained_model
 save
+data
