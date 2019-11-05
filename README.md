@@ -26,4 +26,4 @@ python tracking_on_mot.py --mot_dir path/to/MOT-dataset
 ```
 
 ## code for training
-The training scripts are also publishde in ```useful_scripts```
+The training scripts are also published in ```useful_scripts```
