@@ -24,3 +24,6 @@ cd OTCD
 ```
 python tracking_on_mot.py --mot_dir path/to/MOT-dataset
 ```
+
+## code for training
+If you need the training scripts to train a new model, please email me.
