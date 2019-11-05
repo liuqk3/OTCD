@@ -3,14 +3,26 @@ This repo. is the PyTorch implementation of multi-object tracker OTCD.
 The paper is [real-time online multi-object tracking in compressed domain](https://ieeexplore.ieee.org/abstract/document/8734056).
 There maybe a slight gap between the performance obtained by this script and the performance reported in the paper.
 
+## 2. Citation
+```
+@article{liu2019real,
+  title={Real-Time Online Multi-Object Tracking in Compressed Domain},
+  author={Liu, Qiankun and Liu, Bin and Wu, Yue and Li, Weihai and Yu, Nenghai},
+  journal={IEEE Access},
+  volume={7},
+  pages={76489--76499},
+  year={2019},
+  publisher={IEEE}
+}
+```
 
-## Requirements
+## 3. Requirements
 ```
 PyTorch = 0.3
 python >= 3.5
 ```
 
-## Usage
+## 4. Usage
 1) down load this script
 ```
 git clone https://github.com/liuqk3/OTCD.git
@@ -25,5 +37,5 @@ cd OTCD
 python tracking_on_mot.py --mot_dir path/to/MOT-dataset
 ```
 
-## code for training
+## 5. Code for training
 The training scripts are also published in ```useful_scripts```. You can train all the models by the given scripts.
