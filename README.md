@@ -17,7 +17,7 @@ git clone https://github.com/liuqk3/OTCD.git
 cd OTCD
 ```
 2) download the pretrained model from [BaiduYunPan](https://pan.baidu.com/s/1faVx3KvolH_uXgvwSXYhxg), the extraction code
- is ```e0kq```. Then put the two models to ```./save```
+ is ```e0kq```. Then put all models to ```./save```
 
 3) run the tracker
 
@@ -26,4 +26,4 @@ python tracking_on_mot.py --mot_dir path/to/MOT-dataset
 ```
 
 ## code for training
-The training scripts are also published in ```useful_scripts```
+The training scripts are also published in ```useful_scripts```. You can train all the models by the given scripts.
