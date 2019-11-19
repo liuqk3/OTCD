@@ -23,7 +23,9 @@ python >= 3.5
 ```
 
 ## 4. Usage
-1) down load this script
+1) before running `OTCD`, [`CoViAR`] (https://github.com/chaoyuaw/pytorch-coviar) needs to be installed.
+
+1) down load this repo.
 ```
 git clone https://github.com/liuqk3/OTCD.git
 cd OTCD

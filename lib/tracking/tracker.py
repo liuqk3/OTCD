@@ -673,14 +673,6 @@ class Tracker:
 
         pre_boxes = self._get_previous_boxes()
 
-
-
-
-        pre_boxes = None
-
-
-
-
         t2 = time.time()
         if pre_boxes is None:
             output = self.base_net_model(self.im_data)

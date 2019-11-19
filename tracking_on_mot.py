@@ -54,7 +54,8 @@ def parse_args():
 if __name__ == '__main__':
     args = parse_args()
 
-    if not (len(GPU_IDS) > 0 and torch.cuda.available()):
+    # if not (len(GPU_IDS) > 0 and torch.cuda.available()):
+    if len(GPU_IDS) == 0:
         args.cuda = False
 
     if args.cuda and len(GPU_IDS) > 1 and args.mGPUs:
@@ -73,7 +74,7 @@ if __name__ == '__main__':
     # crop image patch, mv, residual for boxes (detections). And the mask obtained in the
     # appearance matching process also will be preserved.
     args.additional_data_for_box = False
-    args.vis = True
+    args.vis = False
 
     args.feature_crop_size = (1024, 7, 7)  # appearance crop size (h, w)
     args.mv_crop_size = (2, 120, 40) # mv crop size. (c, h, w)

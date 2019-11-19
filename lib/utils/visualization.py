@@ -153,18 +153,22 @@ class Visualization(object):
     #         # self.viewer.gaussian(track.mean[:2], track.covariance[:2, :2],
     #         #                      label="%d" % track.track_id)
 
-    def draw_box(self, boxes):
+    def draw_box(self, boxes, box_type='mot'):
         """
         This function show boxes on the viewer
         :param boxes: a list, each element in it is a ndarray with size (10,), and it has the same format with
                     MOTChallenge det or gt file
+        :param box_type: str, can be ['mot', 'tlbr', 'tlwh']
         :return: None
         """
         boxes = np.asarray(boxes)
         self.viewer.thickness = 2
         for box in boxes:
             target_id = int(box[0])
-            xywh = box[1: 5]
+            tlwh = box[1: 5]
+
+            if box_type == 'tlbr':
+                tlwh[2:4] = tlwh[2:4] - tlwh[0:2]
             if len(box) > 5:
                 #score = str(box[5])
                 score = None
@@ -174,10 +178,10 @@ class Visualization(object):
             if target_id <= 0: # detection
                 # self.viewer.color = create_unique_color_uchar(random.randint(-100, 100))
                 self.viewer.color = 0, 0, 255
-                self.viewer.rectangle(x=xywh[0], y=xywh[1], w=xywh[2], h=xywh[3], label_br=score)
+                self.viewer.rectangle(x=tlwh[0], y=tlwh[1], w=tlwh[2], h=tlwh[3], label_br=score)
             else: # gt or track results
                 self.viewer.color = create_unique_color_uchar(target_id)
-                self.viewer.rectangle(x=xywh[0], y=xywh[1], w=xywh[2], h=xywh[3], label_tl=str(target_id), label_br=score)
+                self.viewer.rectangle(x=tlwh[0], y=tlwh[1], w=tlwh[2], h=tlwh[3], label_tl=str(target_id), label_br=score)
 
 
 def show_feature_map(in_feature, batch_idx=0, min_channel=-1, max_channel=-1,
