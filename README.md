@@ -23,7 +23,7 @@ python >= 3.5
 ```
 
 ## 4. Usage
-1) before running `OTCD`, [CoViAR](https://github.com/chaoyuaw/pytorch-coviar) needs to be installed.
+1) before running `OTCD`, [`CoViAR`](https://github.com/chaoyuaw/pytorch-coviar) needs to be installed. Please click the URL for the usage of `CoViAR`.
 
 1) down load this repo.
 ```
