@@ -135,11 +135,12 @@ class RFCN(RFCN_head):
             # Set fixed blocks to be in eval mode
             self.RCNN_base_i.eval()
 
-            index = [4, 6, 8]
-            index = index[0:cfg.RESNET.FIXED_BLOCKS]
-            for fix_layer in index:
+            index = [8, 6, 4]
+            index = index[0:3-cfg.RESNET.FIXED_BLOCKS]
+
+            for layer in index:
             #for fix_layer in range(8, 3 + cfg.RESNET.FIXED_BLOCKS, -1):
-                self.RCNN_base_i[fix_layer].train()
+                self.RCNN_base_i[layer].train()
 
             def set_bn_eval(m):
                 classname = m.__class__.__name__

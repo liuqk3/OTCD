@@ -122,11 +122,11 @@ class RFCN_tracking(RFCN_tracking_head):
             # Set fixed blocks to be in eval mode
             self.RCNN_base.eval()
 
-            index = [4, 6, 8, 10]
-            index = index[0:cfg.RESNET.FIXED_BLOCKS]
+            index = [10, 8, 6, 4]
+            index = index[0:4-cfg.RESNET.FIXED_BLOCKS]
 
-            for fix_layer in index:
-                self.RCNN_base[fix_layer].train()
+            for layer in index:
+                self.RCNN_base[layer].train()
 
             def set_bn_eval(m):
                 classname = m.__class__.__name__

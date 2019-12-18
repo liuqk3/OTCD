@@ -163,12 +163,12 @@ class RFCN_tracking(RFCN_tracking_head):
             self.RCNN_base_mv.eval()
             self.RCNN_base_residual.eval()
 
-            index = [4, 6, 8, 10]
-            index = index[0:cfg.RESNET.FIXED_BLOCKS]
+            index = [10, 8, 6, 4]
+            index = index[0:4-cfg.RESNET.FIXED_BLOCKS]
 
-            for fix_layer in index:
-                self.RCNN_base_mv[fix_layer].train()
-                self.RCNN_base_residual[fix_layer].train()
+            for layer in index:
+                self.RCNN_base_mv[layer].train()
+                self.RCNN_base_residual[layer].train()
 
             def set_bn_eval(m):
                 classname = m.__class__.__name__

@@ -63,8 +63,8 @@ if __name__ == '__main__':
     else:
         args.mGPUs = False
 
-    args.dataset_year = ['MOT16', 'MOT17']  # ['MOT16', 'MOT17']
-    args.detectors = ['DPM', 'SDP', 'FRCNN'] # ['PRIVATE', 'DPM', 'SDP', 'FRCNN', 'POI']
+    args.dataset_year = ['MOT16']  # ['MOT16', 'MOT17']
+    args.detectors = ['DPM']#, 'SDP', 'FRCNN'] # ['PRIVATE', 'DPM', 'SDP', 'FRCNN', 'POI']
     args.stage = ['test'] # ['test', 'val']
 
     print(args.stage)
