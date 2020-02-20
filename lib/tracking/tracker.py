@@ -148,7 +148,7 @@ class Tracker:
                     used to map boxes to the in_data. If None, we will directly crop the data using
                     the boxes.
         :param in_data_type: str, the type of input data, 'feature', 'im', 'mv', 'residual'
-        :return croped_data
+        :return cropped_data
         """
         if not isinstance(in_data, Variable):
             in_data = Variable(in_data)

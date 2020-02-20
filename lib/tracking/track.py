@@ -140,19 +140,12 @@ class Track:
         if self.mv is not None and not self.is_deleted():
             # we just use the latest mv
             v = self.mv[-1] # dim [2, h, w], tensor
-            hv = v.size(1)
-            wv = v.size(2)
-            hb = self.current_tlbr[2] - self.current_tlbr[0] + 1
-            wb = self.current_tlbr[3] - self.current_tlbr[1] + 1
-
             v = v.view(2, -1) # dim [2, -1]
             v = v.mean(dim=-1) # dim [2], the shift for x and y dimension, [dx, dy]
-            v[0] = v[0] / wv * wb # dx
-            v[1] = v[1] / hv * hb # dy
-            
+
             # current_tlbr: [x1, y1, x2, y2]
-            self.current_tlbr[0::2] += v[0]
-            self.current_tlbr[1::2] += v[1]
+            self.current_tlbr[0::2] -= v[0]
+            self.current_tlbr[1::2] -= v[1]
 
     def predict(self):
         """
