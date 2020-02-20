@@ -14,7 +14,7 @@ do
     output_path=${seq_path}/${seq_name}.mp4
 
     echo frame path: ${frame_path}
-    echo outpu path: ${output_path}
+    echo output path: ${output_path}
 
     ffmpeg -i ${frame_path} -c:v mpeg4 -f rawvideo ${output_path}
     #ffmpeg -f image2 -i ${frame_path} -q:v 1 -c:v mpeg4 -f rawvideo ${output_path}
