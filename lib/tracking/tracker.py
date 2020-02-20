@@ -829,7 +829,8 @@ class Tracker:
                                           confidence=one_bbox[4],
                                           feature=one_f,
                                           mv=one_mv,
-                                          im=one_im)
+                                          im=one_im,
+                                          residual=one_res)
                 detections_to_save.append(one_detection)
                 if one_detection.confidence >= self.tracking_thr[self.detector_name]:
                     detections_to_track.append(one_detection)

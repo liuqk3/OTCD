@@ -33,7 +33,7 @@ class Detection(object):
         The motion vector for this bbox
     """
 
-    def __init__(self, tlbr, confidence, feature=None, im=None, mv=None):
+    def __init__(self, tlbr, confidence, feature=None, im=None, mv=None, residual=None):
         self.tlbr = tlbr
         self.confidence = float(confidence)
         self.feature = feature  # [c, h_f, w_f]
@@ -42,6 +42,7 @@ class Detection(object):
 
         self.mv = mv  # [2, h, w], tensor
         self.im = im  # [3, h, w], tensor, the patch of target
+        self.residual = residual # [3, h, w], tensor, the patch of target
 
     def to_tlwh(self):
         return tlbr2tlwh(self.tlbr)
