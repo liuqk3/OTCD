@@ -52,13 +52,14 @@ def parse_args():
                         choices=['val', 'test', 'train'],
                         help='the phase for this running', type=str)
 
-    parser.add_argument('--mv_for_box', default=False, type=bool, action='store_true',
-                        help='crop motion vectors for box, if True, it will be used to estimate, the shift of box between adjacent frames')
-    parser.add_argument('--im_for_box', default=False, type=bool,
+    parser.add_argument('--mv_for_box', default=False, action='store_true',
+                        help='crop motion vectors for box, if True, it will be used to estimate, '
+                             'the shift of box between adjacent frames')
+    parser.add_argument('--im_for_box', default=False,
                         action='store_true', help='crop image patch vectors for box')
-    parser.add_argument('--res_for_box', default=False, type=bool,
+    parser.add_argument('--res_for_box', default=False,
                         action='store_true', help='crop residuals for box')
-    parser.add_argument('--vis', default=False, type=bool,
+    parser.add_argument('--vis', default=False,
                         action='store_true', help='visualize the tracking results')
 
     args = parser.parse_args()
