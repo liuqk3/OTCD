@@ -1,6 +1,5 @@
 
 import torch
-import warnings
 import numpy as np
 from lib.tracking.utils import tlbr2tlwh
 from lib.utils.visualization import compressed_frame_to_show
@@ -48,17 +47,23 @@ class Track:
         self.feature = detection.feature # [c, h_f, w_f]
         self.feature = self.feature.unsqueeze(dim=0) # [num_f, c, h_f, w_f], now num_f is 1
         self.mv = detection.mv # [2, h, w] or None
-        self.im = detection.im # [3, h, w] or None
-        self.residual = detection.residual # [3, h, w] or None
-
-        self.has_additional_data = True
-        if self.im is None and self.mv is None and self.residual is None:
-            self.has_additional_data = False
-
-        if self.has_additional_data:
+        if self.mv is not None:
             self.mv = self.mv.unsqueeze(dim=0) # [num_mv, 2, h, w]
-            self.im = self.im.unsqueeze(dim=0) # [num_im, 3, h, w], the im patch of this target
+        self.im = detection.im # [3, h, w] or None
+        if self.im is not None:
+            self.im = self.im.unsqueeze(dim=0)  # [num_im, 3, h, w], the im patch of this target
+        self.residual = detection.residual # [3, h, w] or None
+        if self.residual is not None:
             self.residual = self.residual.unsqueeze(dim=0)  # [num_im, 3, h, w]
+
+        # self.has_additional_data = True
+        # if self.im is None and self.mv is None and self.residual is None:
+        #     self.has_additional_data = False
+        #
+        # if self.has_additional_data:
+        #     self.mv = self.mv.unsqueeze(dim=0) # [num_mv, 2, h, w]
+        #     self.im = self.im.unsqueeze(dim=0) # [num_im, 3, h, w], the im patch of this target
+        #     self.residual = self.residual.unsqueeze(dim=0)  # [num_im, 3, h, w]
 
         self.velocity = None
 
@@ -129,6 +134,18 @@ class Track:
 
         return pred_tlbr
 
+    def self_shift(self):
+        """This function perform self tracking based on the motion vectors
+        """
+        if self.mv is not None and not self.is_deleted():
+            # we just use the latest mv
+            v = self.mv[-1] # dim [2, h, w], tensor
+            v = v.view(2, -1) # dim [2, -1]
+            v = v.mean(dim=-1) # dim [2], the shift for x and y dimension, [dx, dy]
+            # current_tlbr: [x1, y1, x2, y2]
+            self.current_tlbr[0::2] += v
+            self.current_tlbr[1::2] += v
+
     def predict(self):
         """
         propagate the state of this track to current frame without the detection. This function
@@ -190,11 +207,22 @@ class Track:
 
         # update the feature for this track
         feature = detection.feature.unsqueeze(dim=0)
-        im, mv, residual = None, None, None
-        if self.has_additional_data:
-            im = detection.im.unsqueeze(dim=0)
-            mv = detection.mv.unsqueeze(dim=0)
-            residual = detection.residual.unsqueeze(dim=0)
+        mv = detection.mv # [2, h, w] or None
+        if mv is not None:
+            mv = mv.unsqueeze(dim=0) # [num_mv, 2, h, w]
+        im = detection.im # [3, h, w] or None
+        if im is not None:
+            im = im.unsqueeze(dim=0)  # [num_im, 3, h, w], the im patch of this target
+        residual = detection.residual # [3, h, w] or None
+        if residual is not None:
+            residual = residual.unsqueeze(dim=0)  # [num_im, 3, h, w]
+
+        #
+        # im, mv, residual = None, None, None
+        # if self.has_additional_data:
+        #     im = detection.im.unsqueeze(dim=0)
+        #     mv = detection.mv.unsqueeze(dim=0)
+        #     residual = detection.residual.unsqueeze(dim=0)
 
         if self.feature is None:
             self.feature = feature
@@ -212,34 +240,60 @@ class Track:
                 else:
                     #self.feature = (1 - cost) * self.feature + cost * feature
                     self.feature = torch.cat((self.feature, feature), dim=0)
-                    if self.has_additional_data:
+                    if self.im is not None and im is not None:
                         self.im = torch.cat((self.im, im), dim=0)
+                    if self.mv is not None and mv is not None:
                         self.mv = torch.cat((self.mv, mv), dim=0)
+                    if self.residual is not None and residual is not None:
                         self.residual = torch.cat((self.residual, residual), dim=0)
+
+                    # if self.has_additional_data:
+                    #     self.im = torch.cat((self.im, im), dim=0)
+                    #     self.mv = torch.cat((self.mv, mv), dim=0)
+                    #     self.residual = torch.cat((self.residual, residual), dim=0)
             elif distance_type == 'iou':
                 # when iou is used for matching
                 self.feature = torch.cat((self.feature, feature), dim=0)  # [num_f, c, h_f, w_f]
-                if self.has_additional_data:
+                if self.im is not None and im is not None:
                     self.im = torch.cat((self.im, im), dim=0)
+                if self.mv is not None and mv is not None:
                     self.mv = torch.cat((self.mv, mv), dim=0)
+                if self.residual is not None and residual is not None:
                     self.residual = torch.cat((self.residual, residual), dim=0)
+                # if self.has_additional_data:
+                #     self.im = torch.cat((self.im, im), dim=0)
+                #     self.mv = torch.cat((self.mv, mv), dim=0)
+                #     self.residual = torch.cat((self.residual, residual), dim=0)
             elif distance_type == 'joint':
                 # when iou and appearance are used for matching jointly
                 self.feature = torch.cat((self.feature, feature), dim=0)  # [num_f, c, h_f, w_f]
-                if self.has_additional_data:
+                if self.im is not None and im is not None:
                     self.im = torch.cat((self.im, im), dim=0)
+                if self.mv is not None and mv is not None:
                     self.mv = torch.cat((self.mv, mv), dim=0)
+                if self.residual is not None and residual is not None:
                     self.residual = torch.cat((self.residual, residual), dim=0)
+                # if self.has_additional_data:
+                #     self.im = torch.cat((self.im, im), dim=0)
+                #     self.mv = torch.cat((self.mv, mv), dim=0)
+                #     self.residual = torch.cat((self.residual, residual), dim=0)
             else:
                 raise RuntimeError('Unknown distance type: {}'.format(distance_type))
         # keep at most self.history features
         history = self.feature.size(0)
         if history > self.history_time:
             self.feature = self.feature[history - self.history_time:history, :, :, :].contiguous()
-            if self.has_additional_data:
+            if self.mv is not None:
                 self.mv = self.mv[history - self.history_time:history, :, :, :].contiguous()
+            if self.im is not None:
                 self.im = self.im[history - self.history_time:history, :, :, :].contiguous()
+            if self.residual is not None:
                 self.residual = self.residual[history - self.history_time:history, :, :, :].contiguous()
+
+            # if self.has_additional_data:
+            #     self.mv = self.mv[history - self.history_time:history, :, :, :].contiguous()
+            #     self.im = self.im[history - self.history_time:history, :, :, :].contiguous()
+            #     self.residual = self.residual[history - self.history_time:history, :, :, :].contiguous()
 
     def tracking(self, velocity=None, bbox_tlbr=None, tranform_sigma=None):
         """
@@ -288,7 +342,8 @@ class Track:
         :param type: the type of history to show
         :return:
         """
-        if not self.has_additional_data:
+        # if not self.has_additional_data:
+        if self.im is None and self.mv is None and self.residual is None:
             raise RuntimeError('Track do not have image patches or motion vectors to show!')
 
         feature = self.feature  # [num_f, c, h, w]
@@ -341,7 +396,12 @@ class Track:
     def is_deleted(self):
         return self.state == TrackState.Deleted
 
-
+if __name__ == "__main__":
+    a = torch.FloatTensor([1,2,3,4])
+    v = torch.FloatTensor([9, 10])
+    a[0::2] += v
+    a[1::2] += v
+    print(a)
 
 
 

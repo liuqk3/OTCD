@@ -29,11 +29,6 @@ def parse_args():
     parser.add_argument('--set_cfgs',
                         help='set config keys', default=None,
                         nargs=argparse.REMAINDER)
-    parser.add_argument('--cuda', default=True,
-                        action='store_true')
-    parser.add_argument('--mGPUs',
-                        help='whether use multiple GPUs',
-                        action='store_true')
     parser.add_argument('--large_scale',
                         help='whether use large imag scale',
                         action='store_true')
@@ -47,6 +42,26 @@ def parse_args():
                         help='the key frame scheduler', type=int)
     parser.add_argument('--iou_or_appearance', default='both', choices=['iou', 'appearance', 'both'],
                         help='the cost used for tracking', type=str)
+    parser.add_argument('--dataset_year', default='MOT16',
+                        choices=['MOT16', 'MOT17'],
+                        help='the dataset to tracking', type=str)
+    parser.add_argument('--detectors', default='PRIVATE',
+                        choices=['PRIVATE', 'DPM', 'SDP', 'FRCNN', 'POI'],
+                        help='the detections provided by the detectors will be used to tracking', type=str)
+    parser.add_argument('--stage', default='val',
+                        choices=['val', 'test', 'train'],
+                        help='the phase for this running', type=str)
+
+    parser.add_argument('--mv_for_box', default=False, type=bool,
+                        action='store_true', help='crop motion vectors for box, if True, it will be used to estimate'
+                                                  'the shift of box between adjacent frames')
+    parser.add_argument('--im_for_box', default=False, type=bool,
+                        action='store_true', help='crop image patch vectors for box')
+    parser.add_argument('--res_for_box', default=False, type=bool,
+                        action='store_true', help='crop residuals for box')
+    parser.add_argument('--vis', default=False, type=bool,
+                        action='store_true', help='visualize the tracking results')
+
     args = parser.parse_args()
     return args
 
@@ -57,24 +72,22 @@ if __name__ == '__main__':
     # if not (len(GPU_IDS) > 0 and torch.cuda.available()):
     if len(GPU_IDS) == 0:
         args.cuda = False
+    else:
+        args.cuda = True
 
-    if args.cuda and len(GPU_IDS) > 1 and args.mGPUs:
+    if args.cuda and len(GPU_IDS) > 1:
         args.mGPUs = True
     else:
         args.mGPUs = False
 
-    args.dataset_year = ['MOT16']  # ['MOT16', 'MOT17']
-    args.detectors = ['DPM']#, 'SDP', 'FRCNN'] # ['PRIVATE', 'DPM', 'SDP', 'FRCNN', 'POI']
-    args.stage = ['test'] # ['test', 'val']
+    args.dataset_year = args.dataset_year.split(',') # ['MOT16']  # ['MOT16', 'MOT17']
+    args.detectors = args.detectors.split(',') # ['DPM']#, 'SDP', 'FRCNN'] # ['PRIVATE', 'DPM', 'SDP', 'FRCNN', 'POI']
+    args.stage = args.stage.split(',') # ['val'] # ['test', 'val']
 
     print(args.stage)
 
     # TODO: the following operations will take some time, set them to False if a faster tracker is required.
-    args.save_detections_with_feature = False  # save the detections, along with the croped features
-    # crop image patch, mv, residual for boxes (detections). And the mask obtained in the
-    # appearance matching process also will be preserved.
-    args.additional_data_for_box = False
-    args.vis = False
+    args.save_detections_with_feature = False  # save the detections, along with the cropped features
 
     args.feature_crop_size = (1024, 7, 7)  # appearance crop size (h, w)
     args.mv_crop_size = (2, 120, 40) # mv crop size. (c, h, w)

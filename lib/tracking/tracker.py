@@ -794,30 +794,31 @@ class Tracker:
                 croped_f = self._crop_data_for_boxes(boxes=det_bboxes[:, 0:4], in_data=feature_map,
                                                      scale=f_scale, in_data_type='feature')
 
-            if self.args.additional_data_for_box:
+            # if self.args.additional_data_for_box:
+            if self.args.mv_for_box or self.args.res_for_box or self.args.im_for_box:
                 im, mv, residual = self.get_frame_blob_from_video(video_path=self.video_file,
                                                                   frame_id=self.frame_id,
                                                                   load_data_for='crop')
-                im = torch.FloatTensor(im).contiguous()
-                mv = torch.FloatTensor(mv).contiguous()
-                residual = torch.FloatTensor(residual).contiguous()
-                im = im.unsqueeze(dim=0).permute(0, 3, 1, 2)  # [bs, 3, h, w]
-                mv = mv.unsqueeze(dim=0).permute(0, 3, 1, 2)  # [bs, 2, h, w]
-                residual = residual.unsqueeze(dim=0).permute(0, 3, 1, 2)  # [bs, 3, h, w]
+                if self.args.im_for_box:
+                    im = torch.FloatTensor(im).contiguous()
+                    im = im.unsqueeze(dim=0).permute(0, 3, 1, 2)  # [bs, 3, h, w]
+                    if self.args.cuda:
+                        im = im.cuda()
+                    croped_im = self._crop_data_for_boxes(boxes=det_bboxes[:, 0:4], in_data=im, in_data_type='im')
 
-                if self.args.cuda:
-                    im = im.cuda()
-                    mv = mv.cuda()
-                    residual = residual.cuda()
-                croped_im = self._crop_data_for_boxes(boxes=det_bboxes[:, 0:4], in_data=im, in_data_type='im')
+                if self.args.mv_for_box:
+                    mv = torch.FloatTensor(mv).contiguous()
+                    mv = mv.unsqueeze(dim=0).permute(0, 3, 1, 2)  # [bs, 2, h, w]
+                    if self.args.cuda:
+                        mv = mv.cuda()
+                    croped_mv = self._crop_data_for_boxes(boxes=det_bboxes[:, 0:4], in_data=mv, in_data_type='mv')
 
-                plt.figure()
-                plt.imshow(self.prepare_data_to_show(croped_im, tool_type='plt'))
-                plt.show()
-
-                croped_mv = self._crop_data_for_boxes(boxes=det_bboxes[:, 0:4], in_data=mv, in_data_type='mv')
-                croped_res = self._crop_data_for_boxes(boxes=det_bboxes[:, 0:4], in_data=residual,
-                                                       in_data_type='residual')
+                if self.args.res_for_box:
+                    residual = torch.FloatTensor(residual).contiguous()
+                    residual = residual.unsqueeze(dim=0).permute(0, 3, 1, 2)  # [bs, 3, h, w]
+                    if self.args.cuda:
+                        residual = residual.cuda()
+                    croped_res = self._crop_data_for_boxes(boxes=det_bboxes[:, 0:4], in_data=residual, in_data_type='residual')
 
             for i in range(det_bboxes.size()[0]):
                 one_bbox = det_bboxes[i]  # [x1, y1, x2, y2, score]
@@ -1267,8 +1268,6 @@ class Tracker:
 
         # update the track set
         for track_idx, detection_idx, cost, distance_type in matches:
-
-
             self.tracks[track_idx].update(detection=self.detections_to_track[detection_idx],
                                           cost=cost, distance_type=distance_type)
 
