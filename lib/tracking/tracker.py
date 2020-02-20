@@ -1393,6 +1393,10 @@ class Tracker:
 
         # TODO: begin to tracking
         for frame_id in range(1, num_frames + 1):  # frame id starts from 1
+            # shift the tracks based on the motion vectors
+            for track in self.tracks:
+                track.self_shift()
+
             self.frame_id = frame_id
 
             # The last frame in this video may can not be load (sometimes the
