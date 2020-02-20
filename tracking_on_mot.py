@@ -59,8 +59,6 @@ def parse_args():
                         action='store_true', help='crop image patch vectors for box')
     parser.add_argument('--res_for_box', default=False,
                         action='store_true', help='crop residuals for box')
-    parser.add_argument('--vis', default=False,
-                        action='store_true', help='visualize the tracking results')
 
     args = parser.parse_args()
     return args
