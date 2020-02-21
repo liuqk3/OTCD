@@ -144,8 +144,8 @@ class Track:
             v = v.mean(dim=-1) # dim [2], the shift for x and y dimension, [dx, dy]
 
             # current_tlbr: [x1, y1, x2, y2]
-            self.current_tlbr[0::2] -= v[0]
-            self.current_tlbr[1::2] -= v[1]
+            self.current_tlbr[0::2] += v[0]
+            self.current_tlbr[1::2] += v[1]
 
     def predict(self):
         """
