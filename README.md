@@ -30,7 +30,7 @@ python >= 3.5
 git clone https://github.com/liuqk3/OTCD.git
 cd OTCD
 ```
-2) download the pretrained model from [BaiduYunPan](https://pan.baidu.com/s/1-Enzek8SQpnr1BY1uzde4w). Then put all models to ```./save```. If you have any problems with the download process, please email me.
+2) download the pretrained model from [BaiduYunPan](https://pan.baidu.com/s/1-Enzek8SQpnr1BY1uzde4w) or [OneDrive](https://mailustceducn-my.sharepoint.com/:f:/g/personal/liuqk3_mail_ustc_edu_cn/Eov9rFdHy7RPrV5YvrIxQkgBQ9cqfrKfNYX5NV0qBRixWQ?e=2qWgua). Then put all models to ```./save```. If you have any problems with the download process, please email me.
 
 3) run the tracker
 
